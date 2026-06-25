@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  docker-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - PORT=8080
+      - HOST=0.0.0.0
+      # 可选的环境变量
+      # - UA=netcraft
+      # - URL=https://www.baidu.com/
+      # - URL302=https://t.me/CMLiussss
+    restart: unless-stopped
+    networks:
+      - docker-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+networks:
+  docker-network:
+    driver: bridge
